@@ -55,12 +55,16 @@ video {
 
 /* CATS */
 .cat {
-  position: fixed;
-  width: 70px;
-  height: 70px;
-  display: block;
+  position: absolute;
+  width: 80px;
   z-index: 10;
   pointer-events: none;
+  animation: float 4s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+  from { transform: translate(0, 0); }
+  to { transform: translate(40px, -40px); }
 }
 </style>
 </head>
@@ -80,59 +84,60 @@ video {
 <img src="love-you-cat.gif" class="cat">
 
 <script>
-window.addEventListener("load", () => {
-  const cats = document.querySelectorAll(".cat");
-  const catData = [];
+const cats = document.querySelectorAll(".cat");
+const catData = [];
 
-  cats.forEach((cat, i) => {
-    const size = 70;
+cats.forEach((cat, i) => {
+  const size = 80;
 
-    const data = {
-      el: cat,
-      size,
-      x: 50 + i * 90,
-      y: 80 + i * 80,
-      vx: (Math.random() * 1.5 + 0.8) * (Math.random() < 0.5 ? -1 : 1),
-      vy: (Math.random() * 1.5 + 0.8) * (Math.random() < 0.5 ? -1 : 1)
-    };
+  const data = {
+    el: cat,
+    size,
+    x: 60 + i * 120,
+    y: 80 + i * 100,
+    vx: Math.random() < 0.5 ? 1 : -1,
+    vy: Math.random() < 0.5 ? 1 : -1
+  };
 
-    cat.style.left = data.x + "px";
-    cat.style.top = data.y + "px";
+  cat.style.left = data.x + "px";
+  cat.style.top = data.y + "px";
 
-    catData.push(data);
+  catData.push(data);
+});
+
+function update() {
+  catData.forEach((c, i) => {
+    c.x += c.vx;
+    c.y += c.vy;
+
+    // Bounce screen edges
+    if (c.x <= 0 || c.x + c.size >= window.innerWidth) c.vx *= -1;
+    if (c.y <= 0 || c.y + c.size >= window.innerHeight) c.vy *= -1;
+
+    // Bounce other cats
+    for (let j = i + 1; j < catData.length; j++) {
+      const o = catData[j];
+      if (
+        c.x < o.x + o.size &&
+        c.x + c.size > o.x &&
+        c.y < o.y + o.size &&
+        c.y + c.size > o.y
+      ) {
+        c.vx *= -1;
+        c.vy *= -1;
+        o.vx *= -1;
+        o.vy *= -1;
+      }
+    }
+
+    c.el.style.left = c.x + "px";
+    c.el.style.top = c.y + "px";
   });
 
-  function animate() {
-    catData.forEach((c, i) => {
-      c.x += c.vx;
-      c.y += c.vy;
+  requestAnimationFrame(update);
+}
 
-      // Bounce walls
-      if (c.x <= 0 || c.x + c.size >= window.innerWidth) c.vx *= -1;
-      if (c.y <= 0 || c.y + c.size >= window.innerHeight) c.vy *= -1;
-
-      // Bounce cats
-      for (let j = i + 1; j < catData.length; j++) {
-        const o = catData[j];
-        if (
-          c.x < o.x + o.size &&
-          c.x + c.size > o.x &&
-          c.y < o.y + o.size &&
-          c.y + c.size > o.y
-        ) {
-          [c.vx, o.vx] = [o.vx, c.vx];
-          [c.vy, o.vy] = [o.vy, c.vy];
-        }
-      }
-
-      c.el.style.transform = `translate(${c.x}px, ${c.y}px)`;
-    });
-
-    requestAnimationFrame(animate);
-  }
-
-  animate();
-});
+update();
 </script>
 
 </body>
