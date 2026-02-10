@@ -6,6 +6,7 @@
 <title>Be My Valentine? 💘</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(-45deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);background-size:400% 400%;animation:bgMove 12s ease infinite,fadeIn 1s forwards;font-family:"Poppins",sans-serif;overflow:hidden;opacity:0;}
@@ -15,17 +16,22 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;bac
 .emoji{font-size:68px;margin-bottom:12px;animation:heartbeat 1.8s infinite;}
 @keyframes heartbeat{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
 h2{font-family:"Playfair Display",serif;font-size:28px;color:#4a1c2f;margin-bottom:30px;}
+.buttons{display:flex;justify-content:center;gap:20px;margin-top:20px;}
 button{padding:14px 36px;border-radius:40px;border:none;font-size:16px;cursor:pointer;box-shadow:0 10px 25px rgba(0,0,0,0.15);transition:.25s ease;}
-#yes{background:linear-gradient(135deg,#ff4d6d,#ff758f);color:white;position:relative;}
-#no{background:rgba(255,255,255,0.9);color:#777;position:fixed;top:50%;left:55%;transform:translate(-50%,-50%);z-index:1000;}
+#yes{background:linear-gradient(135deg,#ff4d6d,#ff758f);color:white;}
+#no{background:rgba(255,255,255,0.9);color:#777;position:relative;} /* relative so it dodges in body */
 </style>
 </head>
 <body>
+
 <div class="card">
   <div class="emoji">🐱❤️</div>
   <h2>Kylie,<br>will you be my Valentine?</h2>
-  <button id="yes">Yes 💖</button>
-  <button id="no">No 🙈</button>
+
+  <div class="buttons">
+    <button id="yes">Yes 💖</button>
+    <button id="no">No 🙈</button>
+  </div>
 </div>
 
 <audio id="hoverSound" src="https://assets.mixkit.co/sfx/preview/mixkit-cartoon-voice-laugh-343.mp3"></audio>
@@ -38,10 +44,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
   const hoverSound = document.getElementById("hoverSound");
   const yesSound = document.getElementById("yesSound");
 
+  // Only index no button dodges
   noBtn.addEventListener("mouseenter", ()=>{
     hoverSound.currentTime=0; hoverSound.play();
     const maxX = window.innerWidth - noBtn.offsetWidth;
     const maxY = window.innerHeight - noBtn.offsetHeight;
+    noBtn.style.position = "absolute"; // allows movement
     noBtn.style.left = Math.random() * maxX + "px";
     noBtn.style.top = Math.random() * maxY + "px";
   });
@@ -53,5 +61,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
   });
 });
 </script>
+
 </body>
 </html>
