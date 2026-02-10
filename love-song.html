@@ -4,60 +4,66 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A Love Song For You 💜</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
-body {
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:linear-gradient(-45deg,#d9a7ff,#fbc2eb,#a18cd1,#fad0c4);
-  background-size:400% 400%;
-  animation:bgMove 12s ease infinite,fadeIn 1s ease forwards;
-  font-family:"Poppins",sans-serif;
-  margin:0;
-  overflow:hidden;
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(-45deg,#d9a7ff,#fbc2eb,#a18cd1,#fad0c4);
+  background-size: 400% 400%;
+  animation: bgMove 12s ease infinite;
 }
 
-@keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes fadeIn{to{opacity:1}}
-
-.card{
-  background:rgba(255,255,255,0.75);
-  backdrop-filter:blur(18px);
-  padding:35px 30px 45px;
-  border-radius:30px;
-  text-align:center;
-  box-shadow:0 35px 90px rgba(0,0,0,0.25);
-  max-width:500px;
-  width:92%;
-  position:relative;
-  z-index:1;
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-h2{
-  font-family:"Playfair Display",serif;
-  color:#4a1c2f;
-  margin-bottom:25px;
-  font-size:28px;
+.card {
+  position: relative;
+  z-index: 2;
+  max-width: 500px;
+  width: 90%;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.8);
+  padding: 30px;
+  border-radius: 28px;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.25);
 }
 
-video{
-  width:100%;
-  border-radius:18px;
-  box-shadow:0 20px 40px rgba(0,0,0,0.25);
-  z-index:0;
-  position:relative;
+h2 {
+  font-family: "Playfair Display", serif;
+  color: #4a1c2f;
+  margin-bottom: 20px;
 }
+
+video {
+  width: 100%;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+/* CATS */
 .cat {
-  width:60px;
-  position:absolute;
-  z-index:2;
-  pointer-events:none;
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  pointer-events: none;
+  z-index: 3;
 }
 </style>
 </head>
+
 <body>
 
 <div class="card">
@@ -67,69 +73,64 @@ video{
   </video>
 </div>
 
-<!-- Cats -->
-<img src="cat5.gif" alt="cat kiss" class="cat">
-<img src="cat2.gif" alt="cat love" class="cat">
-<img src="cat3.gif" alt="cat kiss" class="cat">
-<img src="love-you-cat.gif" alt="cat love" class="cat">
+<!-- Floating cats -->
+<img src="cat5.gif" class="cat">
+<img src="cat2.gif" class="cat">
+<img src="cat3.gif" class="cat">
+<img src="love-you-cat.gif" class="cat">
 
 <script>
-// Physics-style floating cats
-const cats = Array.from(document.querySelectorAll(".cat"));
-const screenWidth = window.innerWidth;
-const screenHeight = window.innerHeight;
+window.onload = () => {
+  const cats = document.querySelectorAll(".cat");
 
-// Initialize each cat with random position and velocity
-cats.forEach(cat => {
-  cat.x = Math.random() * (screenWidth - cat.width);
-  cat.y = Math.random() * (screenHeight - cat.height);
-  cat.vx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
-  cat.vy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
-});
+  const catData = [];
 
-function update() {
-  cats.forEach((cat, i) => {
-    // Move cat
-    cat.x += cat.vx;
-    cat.y += cat.vy;
+  cats.forEach(cat => {
+    const size = 70;
 
-    // Bounce off walls
-    if(cat.x < 0){ cat.x = 0; cat.vx *= -1; }
-    if(cat.y < 0){ cat.y = 0; cat.vy *= -1; }
-    if(cat.x + cat.width > window.innerWidth){ cat.x = window.innerWidth - cat.width; cat.vx *= -1; }
-    if(cat.y + cat.height > window.innerHeight){ cat.y = window.innerHeight - cat.height; cat.vy *= -1; }
+    const data = {
+      el: cat,
+      x: Math.random() * (window.innerWidth - size),
+      y: Math.random() * (window.innerHeight - size),
+      vx: (Math.random() * 2 + 1) * (Math.random() < 0.5 ? -1 : 1),
+      vy: (Math.random() * 2 + 1) * (Math.random() < 0.5 ? -1 : 1),
+      size
+    };
 
-    // Bounce off other cats
-    for(let j = i+1; j < cats.length; j++){
-      const other = cats[j];
-      if(cat.x < other.x + other.width &&
-         cat.x + cat.width > other.x &&
-         cat.y < other.y + other.height &&
-         cat.y + cat.height > other.y){
-        // Simple bounce: swap velocities
-        let tempVx = cat.vx;
-        let tempVy = cat.vy;
-        cat.vx = other.vx;
-        cat.vy = other.vy;
-        other.vx = tempVx;
-        other.vy = tempVy;
-      }
-    }
-
-    // Apply position
-    cat.style.left = cat.x + "px";
-    cat.style.top = cat.y + "px";
+    catData.push(data);
   });
 
-  requestAnimationFrame(update);
-}
+  function animate() {
+    catData.forEach((c, i) => {
+      c.x += c.vx;
+      c.y += c.vy;
 
-// Set actual width/height of images after they load
-cats.forEach(cat => {
-  cat.onload = ()=>{ cat.width = cat.offsetWidth; cat.height = cat.offsetHeight; };
-});
+      // wall bounce
+      if (c.x <= 0 || c.x + c.size >= window.innerWidth) c.vx *= -1;
+      if (c.y <= 0 || c.y + c.size >= window.innerHeight) c.vy *= -1;
 
-update();
+      // cat collision
+      for (let j = i + 1; j < catData.length; j++) {
+        const o = catData[j];
+        if (
+          c.x < o.x + o.size &&
+          c.x + c.size > o.x &&
+          c.y < o.y + o.size &&
+          c.y + c.size > o.y
+        ) {
+          [c.vx, o.vx] = [o.vx, c.vx];
+          [c.vy, o.vy] = [o.vy, c.vy];
+        }
+      }
+
+      c.el.style.transform = `translate(${c.x}px, ${c.y}px)`;
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+};
 </script>
 
 </body>
