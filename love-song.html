@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Love Song For You 💜</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(-45deg,#d9a7ff,#fbc2eb,#a18cd1,#fad0c4);background-size:400% 400%;animation:bgMove 12s ease infinite,fontFadeIn 1s forwards;font-family:"Poppins",sans-serif;opacity:0;position:relative;overflow:hidden;}
+@keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes fontFadeIn{to{opacity:1}}
+.card{width:min(92%,500px);padding:35px 30px 45px;background:rgba(255,255,255,0.75);backdrop-filter:blur(18px);border-radius:30px;text-align:center;box-shadow:0 35px 90px rgba(0,0,0,0.25);}
+video{width:100%;border-radius:18px;box-shadow:0 20px 40px rgba(0,0,0,0.25);}
+.cats{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:6;}
+.cats img{position:absolute;width:90px;will-change:transform;}
+.hearts{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:hidden;}
+.heart{position:absolute;font-size:20px;color:#ff4d6d;opacity:0.7;will-change:transform;}
+</style>
+</head>
+<body>
+
+<div class="hearts" id="heartsContainer"></div>
+
+<div class="card">
+<h2>This song is for you 💜</h2>
+<video controls autoplay muted loop>
+<source src="Loveyou.mp4" type="video/mp4">
+</video>
+</div>
+
+<div class="cats">
+<img src="cat5.gif">
+<img src="cat2.gif">
+<img src="cat3.gif">
+<img src="love-you-cat.gif">
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+  const catsDiv=document.querySelector(".cats");
+  catsDiv.style.display="block";
+  const catImgs=document.querySelectorAll(".cats img");
+
+  catImgs.forEach(cat=>{
+    let x=Math.random()*(window.innerWidth-100);
+    let y=Math.random()*(window.innerHeight-100);
+    cat.style.transform=`translate(${x}px,${y}px)`;
+
+    const moveCat=()=>{
+      const newX=Math.random()*(window.innerWidth-100);
+      const newY=Math.random()*(window.innerHeight-100);
+      const duration=8+Math.random()*6;
+      cat.style.transition=`transform ${duration}s ease-in-out`;
+      cat.style.transform=`translate(${newX}px,${newY}px)`;
+      setTimeout(moveCat,duration*1000);
+    };
+    setTimeout(moveCat,500);
+  });
+
+  const heartsContainer=document.getElementById("heartsContainer");
+  function createHeart(){
+    const heart=document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML="❤️";
+    heart.style.left=Math.random()*100+"%";
+    heart.style.fontSize=(10+Math.random()*20)+"px";
+    heartsContainer.appendChild(heart);
+    const duration=6+Math.random()*6;
+    const endY=window.innerHeight+50;
+    heart.animate([{transform:`translateY(0px) scale(1)`,opacity:0.7},{transform:`translateY(-${endY}px) scale(${1+Math.random()})`,opacity:0}],{duration:duration*1000,iterations:1,easing:"linear"});
+    setTimeout(()=>heart.remove(),duration*1000);
+  }
+  setInterval(createHeart,400);
+});
+</script>
+</body>
+</html>
