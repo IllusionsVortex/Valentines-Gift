@@ -28,7 +28,7 @@ html, body {
 
 .card {
   position: relative;
-  z-index: 2;
+  z-index: 5;
   max-width: 500px;
   width: 90%;
   margin: auto;
@@ -55,11 +55,12 @@ video {
 
 /* CATS */
 .cat {
-  position: absolute;
+  position: fixed;
   width: 70px;
   height: 70px;
+  display: block;
+  z-index: 10;
   pointer-events: none;
-  z-index: 3;
 }
 </style>
 </head>
@@ -73,29 +74,30 @@ video {
   </video>
 </div>
 
-<!-- Floating cats -->
 <img src="cat5.gif" class="cat">
 <img src="cat2.gif" class="cat">
 <img src="cat3.gif" class="cat">
 <img src="love-you-cat.gif" class="cat">
 
 <script>
-window.onload = () => {
+window.addEventListener("load", () => {
   const cats = document.querySelectorAll(".cat");
-
   const catData = [];
 
-  cats.forEach(cat => {
+  cats.forEach((cat, i) => {
     const size = 70;
 
     const data = {
       el: cat,
-      x: Math.random() * (window.innerWidth - size),
-      y: Math.random() * (window.innerHeight - size),
-      vx: (Math.random() * 2 + 1) * (Math.random() < 0.5 ? -1 : 1),
-      vy: (Math.random() * 2 + 1) * (Math.random() < 0.5 ? -1 : 1),
-      size
+      size,
+      x: 50 + i * 90,
+      y: 80 + i * 80,
+      vx: (Math.random() * 1.5 + 0.8) * (Math.random() < 0.5 ? -1 : 1),
+      vy: (Math.random() * 1.5 + 0.8) * (Math.random() < 0.5 ? -1 : 1)
     };
+
+    cat.style.left = data.x + "px";
+    cat.style.top = data.y + "px";
 
     catData.push(data);
   });
@@ -105,11 +107,11 @@ window.onload = () => {
       c.x += c.vx;
       c.y += c.vy;
 
-      // wall bounce
+      // Bounce walls
       if (c.x <= 0 || c.x + c.size >= window.innerWidth) c.vx *= -1;
       if (c.y <= 0 || c.y + c.size >= window.innerHeight) c.vy *= -1;
 
-      // cat collision
+      // Bounce cats
       for (let j = i + 1; j < catData.length; j++) {
         const o = catData[j];
         if (
@@ -130,7 +132,7 @@ window.onload = () => {
   }
 
   animate();
-};
+});
 </script>
 
 </body>
