@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One More Question 💞</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(-45deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);background-size:400% 400%;animation:bgMove 12s ease infinite,fontFadeIn 1s forwards;font-family:"Poppins",sans-serif;opacity:0;}
+@keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes fontFadeIn{to{opacity:1}}
+.card{width:min(92%,420px);padding:40px 30px 45px;background:rgba(255,255,255,0.75);border-radius:28px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.25);}
+button{padding:14px 34px;border-radius:40px;border:none;margin:0 10px;cursor:pointer;}
+#yes{background:#ff4d6d;color:white;}
+#no{background:#fff;}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>Kylie,<br>would you like to be more than my Valentine? 💗</h2>
+<button id="yes">Yes 💞</button>
+<button id="no">Maybe 🙈</button>
+</div>
+
+<audio id="yesSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+  const yesSound=document.getElementById("yesSound");
+  document.getElementById("yes").onclick=()=>{
+    yesSound.play();
+    confetti({particleCount:260,spread:120});
+    setTimeout(()=>{ window.location.href="iloveyou.html"; },700);
+  };
+  document.getElementById("no").onclick=()=>{
+    alert("That’s okay 💕 Take your time");
+  };
+});
+</script>
+</body>
+</html>
