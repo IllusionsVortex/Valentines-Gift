@@ -5,47 +5,132 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A Love Song For You 💜</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(-45deg,#d9a7ff,#fbc2eb,#a18cd1,#fad0c4);background-size:400% 400%;animation:bgMove 12s ease infinite,fadeIn 1s ease forwards;font-family:"Poppins",sans-serif;opacity:0;}
+body {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(-45deg,#d9a7ff,#fbc2eb,#a18cd1,#fad0c4);
+  background-size:400% 400%;
+  animation:bgMove 12s ease infinite,fadeIn 1s ease forwards;
+  font-family:"Poppins",sans-serif;
+  margin:0;
+  overflow:hidden;
+}
+
 @keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 @keyframes fadeIn{to{opacity:1}}
-.card{background:rgba(255,255,255,0.75);backdrop-filter:blur(18px);padding:35px 30px 45px;border-radius:30px;text-align:center;box-shadow:0 35px 90px rgba(0,0,0,0.25);max-width:500px;width:92%;position:relative;}
-h2{font-family:"Playfair Display",serif;color:#4a1c2f;margin-bottom:25px;font-size:28px;}
-video{width:100%;border-radius:18px;box-shadow:0 20px 40px rgba(0,0,0,0.25);}
-.cats{display:flex;justify-content:space-around;margin-top:20px;flex-wrap:wrap;gap:12px;position:relative;}
-.cats img{width:90px;animation:float 3s ease-in-out infinite;position:absolute;}
-.cats img:nth-child(1){left:5%;top:80%;}
-.cats img:nth-child(2){left:75%;top:85%;}
-.cats img:nth-child(3){left:25%;top:70%;}
-.cats img:nth-child(4){left:50%;top:75%;}
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+
+.card{
+  background:rgba(255,255,255,0.75);
+  backdrop-filter:blur(18px);
+  padding:35px 30px 45px;
+  border-radius:30px;
+  text-align:center;
+  box-shadow:0 35px 90px rgba(0,0,0,0.25);
+  max-width:500px;
+  width:92%;
+  position:relative;
+  z-index:1;
+}
+
+h2{
+  font-family:"Playfair Display",serif;
+  color:#4a1c2f;
+  margin-bottom:25px;
+  font-size:28px;
+}
+
+video{
+  width:100%;
+  border-radius:18px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.25);
+  z-index:0;
+  position:relative;
+}
+.cat {
+  width:60px;
+  position:absolute;
+  z-index:2;
+  pointer-events:none;
+}
 </style>
 </head>
 <body>
+
 <div class="card">
-<h2>This song is for you 💜</h2>
-<video controls autoplay muted loop>
-  <source src="Loveyou.mp4" type="video/mp4">
-</video>
-<div class="cats" id="cats">
-  <img src="cat5.gif" alt="cat kiss">
-  <img src="cat2.gif" alt="cat love">
-  <img src="cat3.gif" alt="cat kiss">
-  <img src="love-you-cat.gif" alt="cat love">
-</div>
+  <h2>This song is for you 💜</h2>
+  <video controls autoplay muted loop>
+    <source src="Loveyou.mp4" type="video/mp4">
+  </video>
 </div>
 
+<!-- Cats -->
+<img src="cat5.gif" alt="cat kiss" class="cat">
+<img src="cat2.gif" alt="cat love" class="cat">
+<img src="cat3.gif" alt="cat kiss" class="cat">
+<img src="love-you-cat.gif" alt="cat love" class="cat">
+
 <script>
-// Make cats float randomly across screen
-const cats = document.querySelectorAll(".cats img");
-cats.forEach(cat=>{
-  setInterval(()=>{
-    const maxX = window.innerWidth - cat.offsetWidth;
-    const maxY = window.innerHeight - cat.offsetHeight;
-    cat.style.left = Math.random()*maxX + "px";
-    cat.style.top = Math.random()*maxY + "px";
-  }, 3000);
+// Physics-style floating cats
+const cats = Array.from(document.querySelectorAll(".cat"));
+const screenWidth = window.innerWidth;
+const screenHeight = window.innerHeight;
+
+// Initialize each cat with random position and velocity
+cats.forEach(cat => {
+  cat.x = Math.random() * (screenWidth - cat.width);
+  cat.y = Math.random() * (screenHeight - cat.height);
+  cat.vx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+  cat.vy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
 });
+
+function update() {
+  cats.forEach((cat, i) => {
+    // Move cat
+    cat.x += cat.vx;
+    cat.y += cat.vy;
+
+    // Bounce off walls
+    if(cat.x < 0){ cat.x = 0; cat.vx *= -1; }
+    if(cat.y < 0){ cat.y = 0; cat.vy *= -1; }
+    if(cat.x + cat.width > window.innerWidth){ cat.x = window.innerWidth - cat.width; cat.vx *= -1; }
+    if(cat.y + cat.height > window.innerHeight){ cat.y = window.innerHeight - cat.height; cat.vy *= -1; }
+
+    // Bounce off other cats
+    for(let j = i+1; j < cats.length; j++){
+      const other = cats[j];
+      if(cat.x < other.x + other.width &&
+         cat.x + cat.width > other.x &&
+         cat.y < other.y + other.height &&
+         cat.y + cat.height > other.y){
+        // Simple bounce: swap velocities
+        let tempVx = cat.vx;
+        let tempVy = cat.vy;
+        cat.vx = other.vx;
+        cat.vy = other.vy;
+        other.vx = tempVx;
+        other.vy = tempVy;
+      }
+    }
+
+    // Apply position
+    cat.style.left = cat.x + "px";
+    cat.style.top = cat.y + "px";
+  });
+
+  requestAnimationFrame(update);
+}
+
+// Set actual width/height of images after they load
+cats.forEach(cat => {
+  cat.onload = ()=>{ cat.width = cat.offsetWidth; cat.height = cat.offsetHeight; };
+});
+
+update();
 </script>
+
 </body>
 </html>
