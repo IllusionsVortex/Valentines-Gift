@@ -4,21 +4,94 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Be My Valentine? 💘</title>
+
+<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- Confetti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(-45deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);background-size:400% 400%;animation:bgMove 12s ease infinite,fontFadeIn 1s forwards;font-family:"Poppins",sans-serif;overflow:hidden;opacity:0;position:relative;}
-@keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes fontFadeIn{to{opacity:1}}
-.card{width:min(92%,420px);padding:40px 30px 45px;background:rgba(255,255,255,0.75);backdrop-filter:blur(18px);border-radius:28px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.25);}
-.emoji{font-size:68px;margin-bottom:12px;animation:heartbeat 1.8s infinite;}
-@keyframes heartbeat{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
-button{padding:14px 36px;border-radius:40px;border:none;font-size:16px;cursor:pointer;box-shadow:0 10px 25px rgba(0,0,0,0.15);transition:0.25s ease;margin:0 10px;}
-#yes{background:linear-gradient(135deg,#ff4d6d,#ff758f);color:white;}
-#no{background:rgba(255,255,255,0.9);color:#777;}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+  background-size: 400% 400%;
+  animation: bgMove 12s ease infinite, fadeIn 1s ease forwards;
+  font-family: "Poppins", sans-serif;
+  overflow: hidden;
+  position: relative;
+  opacity: 0;
+}
+
+@keyframes bgMove {
+  0% { background-position:0% 50%; }
+  50% { background-position:100% 50%; }
+  100% { background-position:0% 50%; }
+}
+
+@keyframes fadeIn { to { opacity: 1; } }
+
+.card {
+  width: min(92%, 420px);
+  padding: 40px 30px 45px;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(18px);
+  border-radius: 28px;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+  position: relative; /* important for absolute buttons */
+}
+
+.emoji {
+  font-size: 68px;
+  margin-bottom: 12px;
+  animation: heartbeat 1.8s infinite;
+}
+
+@keyframes heartbeat {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+
+h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 28px;
+  color: #4a1c2f;
+  margin-bottom: 30px;
+}
+
+button {
+  padding: 14px 36px;
+  border-radius: 40px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  transition: 0.25s ease;
+  position: absolute; /* for movement */
+  top: 50%; /* initial position */
+  transform: translateY(-50%);
+}
+
+#yes {
+  left: 12%;
+  background: linear-gradient(135deg, #ff4d6d, #ff758f);
+  color: white;
+}
+
+#no {
+  left: 55%;
+  background: rgba(255,255,255,0.9);
+  color: #777;
+}
 </style>
 </head>
+
 <body>
 
 <div class="card">
@@ -28,29 +101,43 @@ button{padding:14px 36px;border-radius:40px;border:none;font-size:16px;cursor:po
   <button id="no">No 🙈</button>
 </div>
 
+<!-- Sounds -->
 <audio id="hoverSound" src="https://assets.mixkit.co/sfx/preview/mixkit-cartoon-voice-laugh-343.mp3"></audio>
 <audio id="yesSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
 
 <script>
-document.addEventListener("DOMContentLoaded", ()=>{
-  const yesBtn=document.getElementById("yes");
-  const noBtn=document.getElementById("no");
-  const hoverSound=document.getElementById("hoverSound");
-  const yesSound=document.getElementById("yesSound");
+document.addEventListener("DOMContentLoaded", () => {
+  const noBtn = document.getElementById("no");
+  const yesBtn = document.getElementById("yes");
+  const hoverSound = document.getElementById("hoverSound");
+  const yesSound = document.getElementById("yesSound");
 
-  noBtn.addEventListener("mouseenter",()=>{
-    hoverSound.currentTime=0;
+  // Move No button randomly when hovered
+  noBtn.addEventListener("mouseenter", () => {
+    hoverSound.currentTime = 0;
     hoverSound.play();
-    noBtn.style.left=Math.random()*60+"%";
-    noBtn.style.top=Math.random()*40+"px";
+
+    // Random left/top within visible screen limits
+    const maxX = window.innerWidth - noBtn.offsetWidth;
+    const maxY = window.innerHeight - noBtn.offsetHeight;
+
+    const randomX = Math.random() * maxX;
+    const randomY = Math.random() * maxY;
+
+    noBtn.style.left = randomX + "px";
+    noBtn.style.top = randomY + "px";
   });
 
-  yesBtn.onclick=()=>{
+  // Yes button click: confetti + sound + go to next page
+  yesBtn.addEventListener("click", () => {
     yesSound.play();
-    confetti({particleCount:260,spread:120});
-    setTimeout(()=>{ window.location.href="step2.html"; }, 700);
-  };
+    confetti({ particleCount: 260, spread: 120 });
+    setTimeout(() => {
+      window.location.href = "step2.html";
+    }, 700);
+  });
 });
 </script>
+
 </body>
 </html>
